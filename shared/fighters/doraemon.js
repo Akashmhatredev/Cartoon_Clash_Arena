@@ -1,0 +1,33 @@
+import { fighter, light, heavy, crouchLight, crouchHeavy, airLight, airHeavy, throwMove, special, ultimate } from './kit.js';
+
+export default fighter({
+  id: 'doraemon', name: 'Doraemon', title: 'Robot Cat from the Future', bio: 'A gadget-packed robot cat who fights with tomorrow\'s toys.',
+  hp: 105, stats: { speed: 3, power: 3, defense: 4 },
+  walkSpeed: 3.8, backSpeed: 3.1, jumpVel: -16.5, jumpSpeedX: 4, dashSpeed: 9.5, defMult: 0.92,
+  body: { w: 95, h: 165, crouchH: 115 },
+  palette: { primary: '#1f8fe0', secondary: '#ffffff', accent: '#e8322f', skin: '#ffffff', outline: '#0b0f1e' },
+  homeStage: 'suburb',
+  passive: { name: 'Gadget Expert', desc: 'After a 3-hit combo, gadget cooldowns recover twice as fast for 4 seconds.' },
+  moves: {
+    light: light({ name: 'Jab', desc: 'Round-fist jab.' }),
+    heavy: heavy({ name: 'Gadget Bash', desc: 'Bonk with a pocket gadget.', effect: 'gadget' }),
+    crouchLight: crouchLight({ name: 'Low Paw', desc: 'Low swipe.' }),
+    crouchHeavy: crouchHeavy({ name: 'Rolling Sweep', desc: 'Knocks down. Low.' }),
+    airLight: airLight({ name: 'Air Paw', desc: 'Overhead jab.' }),
+    airHeavy: airHeavy({ name: 'Spin Strike', anim: 'spin', desc: 'Two-hit air spin.', hits: 2, hitInterval: 4, damage: 5, active: 8 }),
+    throw: throwMove({ name: 'Pocket Flip' }),
+    special1: special({ name: 'Bamboo Copter', input: 'Sp', anim: 'glide', desc: 'Lift off and glide; steer left/right, attack from the air.',
+      behavior: 'glide', startup: 8, active: 1, recovery: 0, hitbox: null, damage: 0, cooldown: 240 }),
+    special2: special({ name: 'Anywhere Door', input: '→+Sp', anim: 'teleport', desc: 'Short teleport forward (hold back to go backward).',
+      behavior: 'teleport', teleport: { dist: 260, back: 220 }, startup: 14, active: 1, recovery: 12, hitbox: null, damage: 0,
+      invuln: [6, 18], cooldown: 180 }),
+    special3: special({ name: 'Time Machine Pulse', input: '↓+Sp', anim: 'cast', desc: 'Drops a visible field that slows the opponent inside it.',
+      entity: { kind: 'slowField', offX: 170, w: 240, h: 260, life: 150, ground: true, unique: true },
+      startup: 14, active: 1, recovery: 16, hitbox: null, damage: 0, cooldown: 420 }),
+    ultimate: ultimate({ name: 'Future Gadget Arsenal', desc: 'Fires a gadget missile, then follows with a close strike. All blockable.',
+      startup: 24, active: 6, recovery: 28, damage: 14, hitbox: { x: 10, y: -135, w: 92, h: 95 }, effect: 'gadget',
+      projectile: { frame: 12, kind: 'gadgetMissile', vx: 9, vy: 0, gravity: 0, w: 50, h: 28, offX: 60, offY: -100, life: 110,
+        damage: 12, chip: null, hitstun: 24, blockstun: 16, hits: 1, interval: 0, knockback: { x: 5, y: -4 }, guard: 'mid',
+        effect: 'gadget', strength: 2, knockdown: false, juggle: 1 } }),
+  },
+});

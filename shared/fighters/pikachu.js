@@ -1,0 +1,31 @@
+import { fighter, light, heavy, crouchLight, crouchHeavy, airLight, airHeavy, throwMove, special, ultimate, proj } from './kit.js';
+
+export default fighter({
+  id: 'pikachu', name: 'Pikachu', title: 'Thunder Mouse', bio: 'A tiny electric powerhouse that hits like a storm.',
+  hp: 95, stats: { speed: 5, power: 3, defense: 2 },
+  walkSpeed: 5.0, backSpeed: 4.2, jumpVel: -17.5, jumpSpeedX: 5, dashSpeed: 12, defMult: 1.04,
+  body: { w: 72, h: 135, crouchH: 95 },
+  palette: { primary: '#ffd43b', secondary: '#c98a1b', accent: '#e8322f', skin: '#ffd43b', outline: '#0b0f1e' },
+  homeStage: 'forest',
+  passive: { name: 'Static Charge', desc: 'Basic hits store charge (max 3); the next electric special deals +15% per charge.' },
+  moves: {
+    light: light({ name: 'Jab', anim: 'jab', desc: 'Headbutt jab.', hitbox: { x: 8, y: -105, w: 60, h: 62 } }),
+    heavy: heavy({ name: 'Tail Strike', anim: 'kick', desc: 'Swinging tail whip.', hitbox: { x: 6, y: -110, w: 86, h: 70 } }),
+    crouchLight: crouchLight({ name: 'Low Tail', desc: 'Low tail poke.' }),
+    crouchHeavy: crouchHeavy({ name: 'Tail Sweep', desc: 'Knockdown. Low.' }),
+    airLight: airLight({ name: 'Jump Spark', desc: 'Electric air jab. Overhead.', effect: 'electric' }),
+    airHeavy: airHeavy({ name: 'Spin Tail', desc: 'Overhead tail.' }),
+    throw: throwMove({ name: 'Thunder Toss', effect: 'electric' }),
+    special1: special({ name: 'Thunder Jolt', input: 'Sp', anim: 'cast', desc: 'Electric projectile.', electric: true,
+      startup: 14, active: 1, recovery: 20, hitbox: null, damage: 0, cooldown: 70,
+      projectile: proj({ kind: 'thunderJolt', vx: 7, w: 44, h: 36, offX: 45, offY: -60, life: 100, damage: 8, effect: 'electric' }) }),
+    special2: special({ name: 'Quick Attack', input: '→+Sp', anim: 'dashStrike', desc: 'Lightning-fast dash strike. Cooldown.',
+      startup: 4, active: 10, recovery: 14, damage: 7, cooldown: 90, dash: { speed: 13, frames: 10, from: 3, stopOnHit: true },
+      hitbox: { x: 0, y: -105, w: 60, h: 80 }, knockback: { x: 6, y: 0 } }),
+    special3: special({ name: 'Thunder Wave', input: '↓+Sp', anim: 'cast', desc: 'Short pulse that briefly interrupts. Cannot extend combos.', electric: true,
+      startup: 10, active: 4, recovery: 22, damage: 4, hitstun: 30, stunCap: 12, cooldown: 240, effect: 'electric',
+      hitbox: { x: -80, y: -150, w: 200, h: 160 }, knockback: { x: 1, y: 0 } }),
+    ultimate: ultimate({ name: 'Thunderstorm', desc: 'Marks three spots; lightning strikes each after a visible warning. Move or block.',
+      behavior: 'storm', stormDamage: 11, startup: 18, active: 1, recovery: 40, hitbox: null, damage: 0, effect: 'electric', electric: true }),
+  },
+});

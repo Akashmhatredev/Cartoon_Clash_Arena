@@ -1,0 +1,33 @@
+import { fighter, light, heavy, crouchLight, crouchHeavy, airLight, airHeavy, throwMove, special, ultimate, proj } from './kit.js';
+
+export default fighter({
+  id: 'hattori', name: 'Ninja Hattori', title: 'Shadow of the Iga Clan', bio: 'A cheerful young ninja who is everywhere at once.',
+  hp: 90, stats: { speed: 5, power: 3, defense: 2 },
+  walkSpeed: 5.2, backSpeed: 4.4, jumpVel: -18, jumpSpeedX: 5.2, dashSpeed: 12.5, dashFrames: 11, defMult: 1.08,
+  body: { w: 70, h: 180, crouchH: 115 },
+  palette: { primary: '#2f5fd0', secondary: '#1a2550', accent: '#ffd43b', skin: '#ffd2a8', outline: '#0b0f1e' },
+  homeStage: 'dojo',
+  passive: { name: 'Ninja Reflex', desc: 'After a backdash or Wind Dash, his next move recovers 35% faster.' },
+  moves: {
+    light: light({ name: 'Jab', desc: 'Fast ninja jab.', startup: 4 }),
+    heavy: heavy({ name: 'Jump Slash', anim: 'uppercut', desc: 'Rising slash. Launches and beats jumps.', effect: 'slash',
+      startup: 9, active: 5, recovery: 18, damage: 9, hitbox: { x: 4, y: -175, w: 72, h: 120 }, knockback: { x: 2.5, y: -10 } }),
+    crouchLight: crouchLight({ name: 'Low Jab', desc: 'Low poke.', startup: 4 }),
+    crouchHeavy: crouchHeavy({ name: 'Low Sweep', desc: 'Long knockdown sweep. Low.', hitbox: { x: 8, y: -36, w: 100, h: 36 } }),
+    airLight: airLight({ name: 'Air Jab', desc: 'Overhead.', effect: 'slash' }),
+    airHeavy: airHeavy({ name: 'Falling Blade', desc: 'Downward slash. Overhead.', effect: 'slash' }),
+    throw: throwMove({ name: 'Ninja Flip' }),
+    special1: special({ name: 'Shadow Clone', input: 'Sp', anim: 'buff', desc: 'Leaves a harmless decoy and slips back. The decoy soaks one projectile.',
+      behavior: 'clone', startup: 6, active: 1, recovery: 12, hitbox: null, damage: 0, invuln: [4, 10], cooldown: 300 }),
+    special2: special({ name: 'Wind Dash', input: '→+Sp', anim: 'dashStrike', desc: 'Dash that passes through the opponent with brief invulnerability.',
+      dash: { speed: 13, frames: 12, from: 3 }, passThrough: [3, 14], invuln: [3, 14], reflex: true,
+      startup: 3, active: 12, recovery: 10, hitbox: null, damage: 0, cooldown: 120, effect: 'wind' }),
+    special3: special({ name: 'Shuriken Burst', input: '↓+Sp', anim: 'cast', desc: 'Three shuriken in a tight spread. Short range, blockable.',
+      startup: 12, active: 1, recovery: 18, hitbox: null, damage: 0, cooldown: 120,
+      projectile: proj({ kind: 'shuriken', vx: 10, spread: [-1.6, 0, 1.6], w: 26, h: 26, offX: 40, offY: -115, life: 55,
+        damage: 4, hitstun: 14, blockstun: 9, strength: 1, effect: 'slash', knockback: { x: 2, y: 0 } }) }),
+    ultimate: ultimate({ name: 'Shadow Storm', desc: 'Lunging strike; only if it connects, a storm of shadow slashes follows.',
+      startup: 8, active: 5, recovery: 30, damage: 5, hitbox: { x: 5, y: -135, w: 85, h: 105 }, dash: { speed: 10, frames: 8, from: 3 },
+      chainHits: 8, chainInterval: 5, chainDamage: 3, chainFinal: { damage: 9, knockback: { x: 10, y: -12 } }, effect: 'slash' }),
+  },
+});
