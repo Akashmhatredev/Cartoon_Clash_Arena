@@ -1,0 +1,23 @@
+{
+  "name": "cartoon-clash",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "npm run dev -w client",
+    "build": "npm run build -w client",
+    "preview": "npm run preview -w client",
+    "test": "vitest run",
+    "server:install": "npm --prefix server install",
+    "server:dev": "npm --prefix server run dev",
+    "server:deploy": "npm --prefix server run deploy"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
+  }
+}
