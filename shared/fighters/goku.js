@@ -1,0 +1,32 @@
+import { fighter, light, heavy, crouchLight, crouchHeavy, airLight, airHeavy, throwMove, special, ultimate, proj } from './kit.js';
+
+export default fighter({
+  id: 'goku', name: 'Kid Goku', title: 'Little Martial Artist', bio: 'A tail-swinging prodigy who only gets stronger mid-fight.',
+  hp: 105, stats: { speed: 4, power: 4, defense: 3 },
+  walkSpeed: 4.5, backSpeed: 3.7, jumpVel: -18, jumpSpeedX: 4.8, dashSpeed: 11.5, dmgMult: 1.1,
+  body: { w: 75, h: 160, crouchH: 108 },
+  palette: { primary: '#ff8a1f', secondary: '#2f6bff', accent: '#e8322f', skin: '#ffd2a8', outline: '#0b0f1e' },
+  homeStage: 'island',
+  passive: { name: 'Martial Arts Momentum', desc: 'Combos of 4+ hits grant bonus meter (capped per combo).' },
+  moves: {
+    light: light({ name: 'Rapid Punch', anim: 'flurry', desc: 'Two quick punches.', hits: 2, hitInterval: 3, active: 6, damage: 3 }),
+    heavy: heavy({ name: 'Power Kick', anim: 'kick', desc: 'Strong kick.' }),
+    crouchLight: crouchLight({ name: 'Low Jab', desc: 'Low poke.' }),
+    crouchHeavy: crouchHeavy({ name: 'Tail Sweep', desc: 'Knockdown. Low.' }),
+    airLight: airLight({ name: 'Jump Strike', desc: 'Overhead.' }),
+    airHeavy: airHeavy({ name: 'Axe Kick', desc: 'Overhead kick.' }),
+    throw: throwMove({ name: 'Monkey Flip' }),
+    special1: special({ name: 'Kamehameha', input: 'Sp (hold)', anim: 'beam', desc: 'Hold Special to charge (bigger, stronger). Interruptible.',
+      charge: { at: 8, max: 60 }, startup: 16, active: 1, recovery: 22, hitbox: null, damage: 0, cooldown: 90,
+      projectile: proj({ kind: 'kamehameha', vx: 9, w: 60, h: 40, offX: 50, offY: -90, life: 120, damage: 10, effect: 'energy' }) }),
+    special2: special({ name: 'Power Pole Strike', input: '→+Sp', anim: 'slam', desc: 'Very long reach; heavy recovery.',
+      startup: 14, active: 4, recovery: 26, damage: 11, cooldown: 60, hitbox: { x: 30, y: -125, w: 200, h: 55 }, knockback: { x: 6, y: 0 } }),
+    special3: special({ name: 'Dragon Dash', input: '↓+Sp', anim: 'dashStrike', desc: 'Flying dash that launches on hit. Stops at a blocking foe.',
+      startup: 4, active: 12, recovery: 16, damage: 8, cooldown: 120, dash: { speed: 14, frames: 12, from: 4, stopOnHit: true },
+      hitbox: { x: 0, y: -125, w: 70, h: 85 }, knockback: { x: 3, y: -9 } }),
+    ultimate: ultimate({ name: 'Miniature Spirit Burst', desc: 'Short charge, then a large multi-hit energy sphere. Blockable.',
+      startup: 30, active: 1, recovery: 30, hitbox: null, damage: 0, invuln: [1, 10],
+      projectile: proj({ frame: 30, kind: 'spark', vx: 7, w: 90, h: 90, offX: 60, offY: -110, life: 140, damage: 10, hits: 3, interval: 7,
+        strength: 3, effect: 'energy', knockback: { x: 6, y: -10 }, knockdown: true }) }),
+  },
+});

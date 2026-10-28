@@ -1,0 +1,33 @@
+import { fighter, light, heavy, crouchLight, crouchHeavy, airLight, airHeavy, throwMove, special, ultimate, proj } from './kit.js';
+
+export default fighter({
+  id: 'nobita', name: 'Nobita', title: 'The Unlikely Hero', bio: 'Clumsy at everything except his slingshot, and never quite out of luck.',
+  hp: 90, stats: { speed: 2, power: 3, defense: 3 },
+  walkSpeed: 3.4, backSpeed: 2.9, jumpVel: -16, jumpSpeedX: 3.8, dashSpeed: 9,
+  body: { w: 75, h: 170, crouchH: 112 },
+  palette: { primary: '#f6c445', secondary: '#2f6bff', accent: '#ff8a1f', skin: '#ffd2a8', outline: '#0b0f1e' },
+  homeStage: 'suburb',
+  passive: { name: 'Survival Instinct', desc: 'Below 30% HP he takes 15% less damage (never zero).' },
+  moves: {
+    light: light({ name: 'Jab', desc: 'Nervous jab.' }),
+    heavy: heavy({ name: 'Slingshot Strike', desc: 'Swings the slingshot like a club.', hitbox: { x: 10, y: -130, w: 88, h: 70 } }),
+    crouchLight: crouchLight({ name: 'Shin Kick', desc: 'Low poke.' }),
+    crouchHeavy: crouchHeavy({ name: 'Desperate Kick', desc: 'Wild low kick. Knocks down.' }),
+    airLight: airLight({ name: 'Flail', desc: 'Overhead.' }),
+    airHeavy: airHeavy({ name: 'Falling Stomp', desc: 'Overhead stomp.' }),
+    throw: throwMove({ name: 'Panic Push' }),
+    special1: special({ name: 'Slingshot Shot', input: 'Sp', anim: 'cast', desc: 'Fast pellet shot.',
+      startup: 10, active: 1, recovery: 14, hitbox: null, damage: 0, cooldown: 50,
+      projectile: proj({ kind: 'pellet', vx: 12, w: 18, h: 18, offX: 40, offY: -115, life: 70, damage: 6, strength: 1, effect: 'hit',
+        hitstun: 16, blockstun: 10, knockback: { x: 3, y: 0 } }) }),
+    special2: special({ name: 'Lucky Escape', input: '→+Sp', anim: 'teleport', desc: 'Invulnerable backstep. Long cooldown; cannot cancel into it.',
+      noCancel: true, dash: { speed: -10, frames: 14, from: 2 }, invuln: [2, 14], startup: 2, active: 12, recovery: 8,
+      hitbox: null, damage: 0, cooldown: 150 }),
+    special3: special({ name: 'Gadget Trap', input: '↓+Sp', anim: 'cast', desc: 'Sets a visible trap ahead; it stuns briefly if stepped on. One at a time.',
+      entity: { kind: 'trap', offX: 130, w: 60, h: 24, life: 420, ground: true, unique: true, damage: 6 }, trap: true,
+      startup: 14, active: 1, recovery: 16, hitbox: null, damage: 0, cooldown: 240 }),
+    ultimate: ultimate({ name: 'Impossible Comeback', anim: 'ultimate', desc: 'Counter stance: a melee attack into it is punished hard. If nothing comes, a weaker strike.',
+      startup: 34, active: 4, recovery: 22, damage: 12, counter: [3, 30], counterDamage: 30, invuln: [1, 2],
+      hitbox: { x: 10, y: -135, w: 90, h: 95 }, effect: 'sparkle' }),
+  },
+});
