@@ -1,0 +1,9 @@
+export const TICK_RATE = 60;
+export const DT_MS = 1000 / 60;
+export const VIEW = { w: 1280, h: 720 };
+export const STAGE = { left: 60, right: 1220, groundY: 640 };
+export const ROUND_FRAMES = 99 * 60;
+export const ROUNDS_TO_WIN = 2;
+export const METER_MAX = 100;
+export const INPUT_BUFFER_FRAMES = 8;
+export const FIGHTER_IDS = ['shinchan', 'doraemon', 'hattori', 'pikachu', 'ben10', 'nobita', 'goku', 'bheem'];
