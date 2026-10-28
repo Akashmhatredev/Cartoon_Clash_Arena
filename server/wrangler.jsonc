@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cartoon-clash-server",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+
+  // One Durable Object per room, addressed by idFromName(roomCode).
+  "durable_objects": {
+    "bindings": [{ "name": "ROOMS", "class_name": "Room" }]
+  },
+  // The Workers Free plan only allows SQLite-backed Durable Objects.
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }],
+
+  // Per-IP limit for POST /rooms (Workers rate limiting binding). Remove this block if your account lacks it;
+  // the Worker skips the check when the binding is missing.
+  "ratelimits": [
+    { "name": "CREATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }
+  ],
+
+  "vars": {
+    // Comma-separated origins allowed to create/join rooms, e.g. "https://my-game.vercel.app,https://*.vercel.app,http://localhost:5173".
+    // Empty = allow any origin (fine for local dev).
+    "ALLOWED_ORIGINS": ""
+  }
+
+  // Secrets (optional; without them online play works but matches are unranked):
+  //   npx wrangler secret put SUPABASE_URL
+  //   npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+  // For `wrangler dev`, put them in server/.dev.vars (git-ignored), see .dev.vars.example.
+}

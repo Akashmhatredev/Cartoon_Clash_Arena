@@ -1,0 +1,4 @@
+# Copy to server/.dev.vars for `wrangler dev` (never commit the real file).
+# Both are optional. Without them, online play works but matches are not ranked.
+SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-or-secret-key
