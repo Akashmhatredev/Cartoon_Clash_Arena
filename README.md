@@ -1,16 +1,40 @@
-# Cartoon Clash: Legends of Childhood
+<a name="top"></a>
 
-A 2D 1v1 arcade fighting game that runs in the browser. Eight cartoon fighters, seven parallax stages, and a deterministic 60 Hz combat engine shared by the browser and the online server.
+<p align="center">
+  <img src="docs/readme/hero.svg" width="100%" alt="Cartoon Clash: Legends of Childhood">
+</p>
+
+<p align="center">
+  <img src="docs/readme/stack.svg" width="100%" alt="Vue 3, Pinia, Phaser 3, Vite, Web Audio, Cloudflare Workers, Durable Objects, Supabase, Node 20.19+">
+</p>
+
+<p align="center">
+A 2D 1v1 arcade fighting game that runs in the browser.<br>
+Eight cartoon fighters, seven parallax stages, and a deterministic 60 Hz combat engine shared by the browser and the online server.
+</p>
+
+<p align="center">
+  <a href="#quick-start"><img src="docs/readme/nav/quick-start.svg" height="46" alt="Quick start"></a>
+  <a href="#game-modes"><img src="docs/readme/nav/game-modes.svg" height="46" alt="Game modes"></a>
+  <a href="#controls"><img src="docs/readme/nav/controls.svg" height="46" alt="Controls"></a>
+  <a href="#roster"><img src="docs/readme/nav/roster.svg" height="46" alt="Roster"></a>
+  <a href="#configuration"><img src="docs/readme/nav/configuration.svg" height="46" alt="Online setup"></a>
+  <a href="#deployment"><img src="docs/readme/nav/deployment.svg" height="46" alt="Deploy"></a>
+  <a href="#architecture"><img src="docs/readme/nav/architecture.svg" height="46" alt="Architecture"></a>
+</p>
+
+<p align="center">
+  <img src="docs/readme/fight.gif" width="100%" alt="Kid Goku vs Pikachu in Training mode on the Moonlit Dojo stage">
+</p>
 
 - **Offline first.** Training, Arcade and Local Versus work right after `npm install && npm run dev`. No server, account, env vars or network needed.
 - **Optional online.** Private rooms with a short join code, running on a Cloudflare Worker + Durable Object that is the authority on every match.
 - **Optional accounts.** Supabase sign-in, rank points (Elo), match history and a leaderboard.
 
-Stack: Vue 3 + Pinia (menus and HUD), Phaser 3 (fight loop), Vite, plain JavaScript ES modules, Web Audio (synthesized sound effects), Cloudflare Workers + Durable Objects, Supabase.
+<br>
 
----
-
-## Quick start
+<a name="quick-start"></a>
+<img src="docs/readme/headers/quick-start.svg" width="100%" alt="01 / Setup: Quick start">
 
 Requires **Node 20.19 or newer** (`.nvmrc` pins Node 24).
 
@@ -34,9 +58,20 @@ That's all you need for offline play. If Online, Account or Leaderboard are not 
 | `npm run server:deploy` | Deploy the Worker to Cloudflare |
 | `npm test` | Run Vitest. There are no test files yet, so this currently exits with "No test files found". |
 
----
+<br>
 
-## Game modes
+<a name="game-modes"></a>
+<img src="docs/readme/headers/game-modes.svg" width="100%" alt="02 / Play: Game modes">
+
+<p align="center">
+  <img src="docs/readme/modes/arcade.svg" width="32%" alt="Arcade: pick a fighter and a difficulty, then climb a 7-bout ladder. The final boss waits on Clash Colosseum with +30% HP and +15% damage. Runs are saved locally, so you can resume later.">
+  <img src="docs/readme/modes/versus.svg" width="32%" alt="Local Versus: two players on one device, with keyboard and/or gamepads. Rematch and switch characters without leaving the match flow.">
+  <img src="docs/readme/modes/training.svg" width="32%" alt="Training: a dummy that is stationary, invincible or controlled by a basic AI. Optional infinite meter, live damage and combo readout, move-list overlay and a reset button.">
+</p>
+<p align="center">
+  <img src="docs/readme/modes/online.svg" width="32%" alt="Online (optional): create a private room or join one by its 5-character code. Pick fighters, ready up and play best of 3. Rematch, ping indicator and reconnects included.">
+  <img src="docs/readme/modes/rank.svg" width="32%" alt="Leaderboard and Account (optional): sign in, set a display name, and track rank points (Elo), wins and losses, match history and the top 100 players.">
+</p>
 
 | Mode | Description |
 | --- | --- |
@@ -46,9 +81,14 @@ That's all you need for offline play. If Online, Account or Leaderboard are not 
 | **Online** | Create a private room or join one by its 5-character code. Both players pick fighters and ready up, then play best of 3. Supports rematch, a ping indicator and reconnecting. |
 | **Leaderboard / Account** | Sign in, set a display name, and view rank points, wins/losses and the top 100. |
 
----
+<br>
 
-## Controls
+<a name="controls"></a>
+<img src="docs/readme/headers/controls.svg" width="100%" alt="03 / Input: Controls">
+
+<p align="center">
+  <img src="docs/readme/controls.svg" width="100%" alt="Animated input demo: double-tap forward to dash, down + Special for Special 3, Light into Heavy into Special for a 3-hit combo, and the Ultimate button with a full meter.">
+</p>
 
 All keyboard bindings can be changed in **Settings > Controls**. Directions are absolute screen directions; the engine works out forward and back from which way your fighter faces.
 
@@ -56,17 +96,17 @@ All keyboard bindings can be changed in **Settings > Controls**. Directions are 
 
 | Action | Player 1 | Player 2 |
 | --- | --- | --- |
-| Move left / right | `A` / `D` | `←` / `→` |
-| Jump | `W` | `↑` |
-| Crouch | `S` | `↓` |
-| Light | `J` | `Numpad 1` |
-| Heavy | `K` | `Numpad 2` |
-| Special | `L` | `Numpad 3` |
-| Block | `U` | `Numpad 4` |
-| Throw | `I` | `Numpad 5` |
-| Ultimate | `O` | `Numpad 6` |
+| Move left / right | <kbd>A</kbd> / <kbd>D</kbd> | <kbd>←</kbd> / <kbd>→</kbd> |
+| Jump | <kbd>W</kbd> | <kbd>↑</kbd> |
+| Crouch | <kbd>S</kbd> | <kbd>↓</kbd> |
+| Light | <kbd>J</kbd> | <kbd>Numpad 1</kbd> |
+| Heavy | <kbd>K</kbd> | <kbd>Numpad 2</kbd> |
+| Special | <kbd>L</kbd> | <kbd>Numpad 3</kbd> |
+| Block | <kbd>U</kbd> | <kbd>Numpad 4</kbd> |
+| Throw | <kbd>I</kbd> | <kbd>Numpad 5</kbd> |
+| Ultimate | <kbd>O</kbd> | <kbd>Numpad 6</kbd> |
 
-`Esc` (or `P` if it isn't bound) pauses the game. `F3` toggles the debug overlay (FPS, ping, tick drift). Neither `Esc` nor `F3` can be rebound.
+<kbd>Esc</kbd> (or <kbd>P</kbd> if it isn't bound) pauses the game. <kbd>F3</kbd> toggles the debug overlay (FPS, ping, tick drift). Neither <kbd>Esc</kbd> nor <kbd>F3</kbd> can be rebound.
 
 ### Gamepad (standard mapping)
 
@@ -102,9 +142,23 @@ On touch devices, a virtual D-pad and buttons appear (Light, Heavy, Special, Jum
 
 Inputs are buffered for 8 frames. You can view each fighter's full move list, with inputs and descriptions, on the character select screen and in the pause menu.
 
----
+<br>
 
-## Roster
+<a name="roster"></a>
+<img src="docs/readme/headers/roster.svg" width="100%" alt="04 / Fighters: Roster">
+
+<p align="center">
+  <img src="docs/readme/roster/shinchan.svg" width="24%" alt="Shinchan, The Kasukabe Menace. HP 100. Speed 4, Power 3, Defense 2. Ultimate: Maximum Mischief.">
+  <img src="docs/readme/roster/doraemon.svg" width="24%" alt="Doraemon, Robot Cat from the Future. HP 105. Speed 3, Power 3, Defense 4. Ultimate: Future Gadget Arsenal.">
+  <img src="docs/readme/roster/hattori.svg" width="24%" alt="Ninja Hattori, Shadow of the Iga Clan. HP 90. Speed 5, Power 3, Defense 2. Ultimate: Shadow Storm.">
+  <img src="docs/readme/roster/pikachu.svg" width="24%" alt="Pikachu, Thunder Mouse. HP 95. Speed 5, Power 3, Defense 2. Ultimate: Thunderstorm.">
+</p>
+<p align="center">
+  <img src="docs/readme/roster/ben10.svg" width="24%" alt="Ben 10, Wielder of the Omnitrix. HP 100. Speed 3, Power 3, Defense 3. Ultimate: Omnitrix Overload.">
+  <img src="docs/readme/roster/nobita.svg" width="24%" alt="Nobita, The Unlikely Hero. HP 90. Speed 2, Power 3, Defense 3. Ultimate: Impossible Comeback.">
+  <img src="docs/readme/roster/goku.svg" width="24%" alt="Kid Goku, Little Martial Artist. HP 105. Speed 4, Power 4, Defense 3. Ultimate: Miniature Spirit Burst.">
+  <img src="docs/readme/roster/bheem.svg" width="24%" alt="Chhota Bheem, Strongest Boy in the Village. HP 115. Speed 2, Power 5, Defense 4. Ultimate: Dholakpur Smash.">
+</p>
 
 | Fighter | HP | Specials | Ultimate | Passive |
 | --- | --- | --- | --- | --- |
@@ -117,13 +171,23 @@ Inputs are buffered for 8 frames. You can view each fighter's full move list, wi
 | **Kid Goku** | 105 | Kamehameha (hold to charge), Power Pole Strike, Dragon Dash | Miniature Spirit Burst | *Martial Arts Momentum:* long combos build bonus meter |
 | **Chhota Bheem** | 115 | Power Charge, Earthquake Slam, Super Strength | Dholakpur Smash | *Unbreakable Spirit:* armor against light hits on some heavy frames |
 
-Stages: Neon City Rooftop, Sunset Suburb, Moonlit Dojo, Thunder Forest, Village Square, Tournament Island and Clash Colosseum (the arcade final).
-
 Fighters are pure data (`shared/fighters/<id>.js`): stats, hurtboxes, and per-move frame data, hitboxes, damage, knockback, cooldown and meter values. Names, moves and art can be changed without touching the engine.
 
----
+<br>
 
-## Settings
+<a name="stages"></a>
+<img src="docs/readme/headers/stages.svg" width="100%" alt="05 / Arenas: Stages">
+
+<p align="center">
+  <img src="docs/readme/stages.svg" width="100%" alt="Neon City Rooftop, Sunset Suburb, Moonlit Dojo, Thunder Forest, Village Square, Tournament Island and Clash Colosseum (the arcade final)">
+</p>
+
+Seven parallax stages: Neon City Rooftop, Sunset Suburb, Moonlit Dojo, Thunder Forest, Village Square, Tournament Island and Clash Colosseum (the arcade final). Every stage is painted procedurally at load, with ambient motion: twinkling lights, drifting clouds, falling petals, flocks of birds, swaying flags, lanterns, torches, embers and crowds.
+
+<br>
+
+<a name="settings"></a>
+<img src="docs/readme/headers/settings.svg" width="100%" alt="06 / Options: Settings">
 
 Settings are saved in `localStorage` (`cc.settings.v1`); arcade progress is saved in `cc.progress.v1`.
 
@@ -135,9 +199,10 @@ Settings are saved in `localStorage` (`cc.settings.v1`); arcade progress is save
 - Touch controls and gamepad options
 - Player name
 
----
+<br>
 
-## Configuration (online and accounts)
+<a name="configuration"></a>
+<img src="docs/readme/headers/configuration.svg" width="100%" alt="07 / Online and accounts: Configuration (optional)">
 
 All of this is optional. Leave it out and the game runs fully offline.
 
@@ -178,9 +243,10 @@ npm run dev
 
 Open the game in two different browsers (or one normal window and one private window). Create a room in one, then join it with the code in the other.
 
----
+<br>
 
-## Deployment
+<a name="deployment"></a>
+<img src="docs/readme/headers/deployment.svg" width="100%" alt="08 / Ship it: Deployment (free tiers)">
 
 The project is set up for three free tiers. Only the frontend is required.
 
@@ -198,9 +264,14 @@ Short version:
 
 Full step-by-step instructions, verification steps, and the current free-tier limits are in **[docs/DEPLOY.md](docs/DEPLOY.md)**.
 
----
+<br>
 
-## Architecture
+<a name="architecture"></a>
+<img src="docs/readme/headers/architecture.svg" width="100%" alt="09 / Under the hood: Architecture">
+
+<p align="center">
+  <img src="docs/readme/architecture.svg" width="100%" alt="Architecture: the browser (Vue 3 + Pinia, Phaser 3 FightScene, Local or Online driver) sends only input bitmasks at 60 Hz to a Cloudflare Room Durable Object, which runs the shared engine and broadcasts snapshots at 20 Hz, then records results in Supabase through a service-role function. The deterministic engine in shared/ is used by both sides.">
+</p>
 
 ```
 shared/            Deterministic game logic, used by both client and server
@@ -217,6 +288,7 @@ client/            Vue 3 + Vite app
 server/            Cloudflare Worker (HTTP + WebSocket) and Room Durable Object
 supabase/          schema.sql: tables, RLS, leaderboard view, cc_record_match()
 docs/DEPLOY.md     Deployment guide and free-tier limits
+docs/readme/       The animated SVG assets used by this README
 CONTRACT.md        Cross-module API contract (engine state, events, driver interface)
 ```
 
@@ -226,13 +298,14 @@ Key design points:
 - **Driver interface.** `FightScene` runs a fixed 60 Hz accumulator with render interpolation and talks to a driver (`tick(inputs) -> events`). `LocalDriver` steps the engine directly. `OnlineDriver` predicts locally and reconciles to server snapshots.
 - **Server authority.** Clients send only input bitmasks. The Room Durable Object runs the engine at 60 Hz and broadcasts snapshots at 20 Hz. Clients cannot declare hits, damage, rounds or wins. Rank points are written only by the Worker through a `SECURITY DEFINER` function that only `service_role` can execute.
 - **Abuse limits.** Messages are capped at 1 KB (4 KB for the hello message), each socket can send at most 120 messages/s, room creation is rate-limited per IP, unknown protocol versions are rejected, stale or duplicate inputs are dropped, and idle rooms are cleaned up after 10 minutes.
-- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Phaser runs with `pixelArt:false` and antialiasing on.
+- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Phaser runs with `pixelArt:false` and antialiasing on. The portraits in this README are the game's own, rendered by the same code.
 
 `CONTRACT.md` documents the engine state shape, event list, fighter data format and module interfaces in detail.
 
----
+<br>
 
-## Known limitations
+<a name="limitations"></a>
+<img src="docs/readme/headers/limitations.svg" width="100%" alt="10 / Honest notes: Known limitations">
 
 - **No automated tests yet.** Vitest is installed and `npm test` is wired up, but no test files exist, so it currently exits with an error. Combat balance has only been checked by playing.
 - **Online netcode is prediction + reconciliation, not rollback.** The net layer is kept behind the driver interface so rollback could be added later. On high-latency connections, expect visible corrections to the opponent's position.
@@ -244,9 +317,14 @@ Key design points:
 - **Bundle size.** The Phaser fight chunk is about 360 kB gzipped. It is lazy-loaded, so menus load without it.
 - **Character IP.** This is a non-commercial fan project. Shinchan, Doraemon, Ninja Hattori, Pikachu, Ben 10, Nobita, Goku and Chhota Bheem belong to their respective owners, and this project is not affiliated with or endorsed by them. All art is original procedural placeholder art. Fighters are data-driven, so names and art can be replaced without touching the engine.
 
----
+<br>
 
-## Credits
+<a name="credits"></a>
+<img src="docs/readme/headers/credits.svg" width="100%" alt="11 / Thanks: Credits">
 
-- Fonts: [Bungee](https://fonts.google.com/specimen/Bungee) and [Inter](https://rsms.me/inter/), self-hosted under the SIL Open Font License (see `client/public/fonts/OFL-*.txt`).
+- Fonts: [Bungee](https://fonts.google.com/specimen/Bungee) and [Inter](https://rsms.me/inter/), self-hosted under the SIL Open Font License (see `client/public/fonts/OFL-*.txt`). The README graphics use the same two fonts, converted to outlines so they render everywhere.
 - Built with [Vue](https://vuejs.org/), [Pinia](https://pinia.vuejs.org/), [Phaser](https://phaser.io/), [Vite](https://vite.dev/), [Cloudflare Workers](https://developers.cloudflare.com/workers/) and [Supabase](https://supabase.com/).
+
+<p align="center">
+  <a href="#top"><img src="docs/readme/footer.svg" width="100%" alt="Continue? Insert coin. Back to top."></a>
+</p>

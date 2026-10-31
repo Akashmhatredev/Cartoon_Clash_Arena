@@ -49,7 +49,8 @@ for (const id of ids) {
   if (!d) { console.error(`unknown fighter ${id}`); process.exit(1); }
   const forms = [null, ...Object.keys(d.forms || {})];
   for (const form of forms) {
-    console.log(`\n== ${d.name} (${id}${form ? ' / ' + form : ''})  hp ${d.hp}  body ${d.body.w}x${d.body.h}/${d.body.crouchH}  walk ${d.walkSpeed} back ${d.backSpeed} jump ${d.jumpVel} dash ${d.dashSpeed}x${d.dashFrames}  dmg x${d.dmgMult} def x${d.defMult}`);
+    const s = form ? { ...d, ...d.forms[form] } : d; // form stat overrides
+    console.log(`\n== ${d.name} (${id}${form ? ' / ' + form : ''})  hp ${d.hp}  body ${s.body.w}x${s.body.h}/${s.body.crouchH}  walk ${s.walkSpeed} back ${s.backSpeed} jump ${s.jumpVel} dash ${s.dashSpeed}x${s.dashFrames}  dmg x${s.dmgMult} def x${s.defMult}`);
     console.log(header);
     for (const slot of SLOTS) {
       const m = getMove(id, slot, form);
