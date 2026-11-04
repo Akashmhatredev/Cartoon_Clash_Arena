@@ -204,20 +204,23 @@ move = {
 }
 ```
 
-Body sizes (art must match these heights):
+Body sizes (art must match these heights). Heights are canon-relative but compressed into a playable range; Pikachu is scaled up to stay a fair target, as in crossover fighting games. `w` is also the push box and wall clamp width.
 
-| id | w | h | crouchH |
-| --- | --- | --- | --- |
-| shinchan | 70 | 150 | 100 |
-| doraemon | 95 | 165 | 115 |
-| hattori | 70 | 180 | 115 |
-| pikachu | 72 | 135 | 95 |
-| ben10 | 80 | 175 | 115 (fourarms 110 x 205) |
-| nobita | 75 | 170 | 112 |
-| goku | 75 | 160 | 108 |
-| bheem | 95 | 175 | 118 |
+| id | w | h | crouchH | canon reference |
+| --- | --- | --- | --- | --- |
+| shinchan | 72 | 138 | 94 | 5 y/o |
+| doraemon | 104 | 158 | 112 | 129.3 cm, 129.3 kg |
+| hattori | 66 | 166 | 108 | 11 y/o, ~140 cm |
+| pikachu | 74 | 120 | 84 | 40 cm (scaled up for gameplay) |
+| ben10 | 70 | 166 | 108 | 10 y/o |
+| ben10 form fourarms | 118 | 210 | 138 | |
+| ben10 form xlr8 | 70 | 164 | 102 | |
+| ben10 form heatblast | 78 | 178 | 116 | |
+| nobita | 64 | 168 | 108 | 10 y/o, ~140 cm |
+| goku | 70 | 146 | 98 | Kid Goku, ~100-124 cm |
+| bheem | 90 | 160 | 106 | 9 y/o |
 
-Standing light and heavy hitboxes must vertically cover feet-offsets -60 to -110 so they hit every fighter, including Pikachu.
+Standing light and heavy hitboxes must vertically cover feet-offsets -60 to -110 so they hit every fighter, including Pikachu (120 standing, 84 crouching). Changing a `body` changes the simulation, so it requires a `PROTOCOL_VERSION` bump.
 
 ### Anim keys
 

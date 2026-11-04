@@ -4,7 +4,7 @@ export default fighter({
   id: 'goku', name: 'Kid Goku', title: 'Little Martial Artist', bio: 'A tail-swinging prodigy who only gets stronger mid-fight.',
   hp: 105, stats: { speed: 4, power: 4, defense: 3 },
   walkSpeed: 4.5, backSpeed: 3.7, jumpVel: -18, jumpSpeedX: 4.8, dashSpeed: 11.5, dmgMult: 1.1,
-  body: { w: 75, h: 160, crouchH: 108 },
+  body: { w: 70, h: 146, crouchH: 98 },
   palette: { primary: '#ff8a1f', secondary: '#2f6bff', accent: '#e8322f', skin: '#ffd2a8', outline: '#0b0f1e' },
   homeStage: 'island',
   passive: { name: 'Martial Arts Momentum', desc: 'Combos of 4+ hits grant bonus meter (capped per combo).' },

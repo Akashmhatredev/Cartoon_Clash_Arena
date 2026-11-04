@@ -4,7 +4,7 @@ export default fighter({
   id: 'pikachu', name: 'Pikachu', title: 'Thunder Mouse', bio: 'A tiny electric powerhouse that hits like a storm.',
   hp: 95, stats: { speed: 5, power: 3, defense: 2 },
   walkSpeed: 5.0, backSpeed: 4.2, jumpVel: -17.5, jumpSpeedX: 5, dashSpeed: 12, defMult: 1.04,
-  body: { w: 72, h: 135, crouchH: 95 },
+  body: { w: 74, h: 120, crouchH: 84 },
   palette: { primary: '#ffd43b', secondary: '#c98a1b', accent: '#e8322f', skin: '#ffd43b', outline: '#0b0f1e' },
   homeStage: 'forest',
   passive: { name: 'Static Charge', desc: 'Basic hits store charge (max 3); the next electric special deals +15% per charge.' },

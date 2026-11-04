@@ -160,18 +160,20 @@ Inputs are buffered for 8 frames. You can view each fighter's full move list, wi
   <img src="docs/readme/roster/bheem.svg" width="24%" alt="Chhota Bheem, Strongest Boy in the Village. HP 115. Speed 2, Power 5, Defense 4. Ultimate: Dholakpur Smash.">
 </p>
 
-| Fighter | HP | Specials | Ultimate | Passive |
-| --- | --- | --- | --- | --- |
-| **Shinchan** | 100 | B-Style Dash, Mischief Feint, Chaos Spin | Maximum Mischief | *Unpredictable:* some basics recover faster |
-| **Doraemon** | 105 | Bamboo Copter, Anywhere Door, Time Machine Pulse | Future Gadget Arsenal | *Gadget Expert:* faster gadget cooldowns after a 3-hit combo |
-| **Ninja Hattori** | 90 | Shadow Clone, Wind Dash, Shuriken Burst | Shadow Storm | *Ninja Reflex:* faster recovery after a dodge |
-| **Pikachu** | 95 | Thunder Jolt, Quick Attack, Thunder Wave | Thunderstorm | *Static Charge:* basic hits power up the next electric special |
-| **Ben 10** | 100 | Omnitrix Shift (Four Arms, XLR8, Heatblast), Alien Rush, Elemental Blast | Omnitrix Overload | *Adaptive Fighter:* each alien form has real strengths and downsides |
-| **Nobita** | 90 | Slingshot Shot, Lucky Escape, Gadget Trap | Impossible Comeback | *Survival Instinct:* takes less damage below 30% HP |
-| **Kid Goku** | 105 | Kamehameha (hold to charge), Power Pole Strike, Dragon Dash | Miniature Spirit Burst | *Martial Arts Momentum:* long combos build bonus meter |
-| **Chhota Bheem** | 115 | Power Charge, Earthquake Slam, Super Strength | Dholakpur Smash | *Unbreakable Spirit:* armor against light hits on some heavy frames |
+| Fighter | HP | Height (canon) | Specials | Ultimate | Passive |
+| --- | --- | --- | --- | --- | --- |
+| **Shinchan** | 100 | 138 px (5 y/o) | B-Style Dash, Mischief Feint, Chaos Spin | Maximum Mischief | *Unpredictable:* some basics recover faster |
+| **Doraemon** | 105 | 158 px (129.3 cm, 129.3 kg) | Bamboo Copter, Anywhere Door, Time Machine Pulse | Future Gadget Arsenal | *Gadget Expert:* faster gadget cooldowns after a 3-hit combo |
+| **Ninja Hattori** | 90 | 166 px (~140 cm) | Shadow Clone, Wind Dash, Shuriken Burst | Shadow Storm | *Ninja Reflex:* faster recovery after a dodge |
+| **Pikachu** | 95 | 120 px (40 cm, scaled up for gameplay) | Thunder Jolt, Quick Attack, Thunder Wave | Thunderstorm | *Static Charge:* basic hits power up the next electric special |
+| **Ben 10** | 100 | 166 px (10 y/o; Four Arms 210 px) | Omnitrix Shift (Four Arms, XLR8, Heatblast), Alien Rush, Elemental Blast | Omnitrix Overload | *Adaptive Fighter:* each alien form has real strengths and downsides |
+| **Nobita** | 90 | 168 px (~140 cm) | Slingshot Shot, Lucky Escape, Gadget Trap | Impossible Comeback | *Survival Instinct:* takes less damage below 30% HP |
+| **Kid Goku** | 105 | 146 px (~100-124 cm) | Kamehameha (hold to charge), Power Pole Strike, Dragon Dash | Miniature Spirit Burst | *Martial Arts Momentum:* long combos build bonus meter |
+| **Chhota Bheem** | 115 | 160 px (9 y/o) | Power Charge, Earthquake Slam, Super Strength | Dholakpur Smash | *Unbreakable Spirit:* armor against light hits on some heavy frames |
 
 Fighters are pure data (`shared/fighters/<id>.js`): stats, hurtboxes, and per-move frame data, hitboxes, damage, knockback, cooldown and meter values. Names, moves and art can be changed without touching the engine.
+
+A fighter's height sets both its hurtbox and its drawn size. Heights follow each character's canon size, compressed into a playable range. Pikachu is scaled up to fighter size, as crossover fighting games do, so it stays a fair target.
 
 <br>
 

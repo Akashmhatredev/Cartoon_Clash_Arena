@@ -4,7 +4,7 @@ export default fighter({
   id: 'shinchan', name: 'Shinchan', title: 'The Kasukabe Menace', bio: 'A cheeky five-year-old whose chaos is his strategy.',
   hp: 100, stats: { speed: 4, power: 3, defense: 2 },
   walkSpeed: 4.6, backSpeed: 3.8, jumpVel: -17, jumpSpeedX: 4.6, dashSpeed: 11, defMult: 1.08,
-  body: { w: 70, h: 150, crouchH: 100 },
+  body: { w: 72, h: 138, crouchH: 94 },
   palette: { primary: '#e8322f', secondary: '#f6c445', accent: '#22e4ff', skin: '#ffd2a8', outline: '#0b0f1e' },
   homeStage: 'suburb',
   passive: { name: 'Unpredictable', desc: 'Punch, Kick and his low poke recover a few frames faster than normal.' },
