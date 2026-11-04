@@ -56,7 +56,7 @@ That's all you need for offline play. If Online, Account or Leaderboard are not 
 | `npm run server:install` | Install the Worker's dependencies (`server/` is not an npm workspace) |
 | `npm run server:dev` | Run the Worker locally with `wrangler dev` on port 8787 |
 | `npm run server:deploy` | Deploy the Worker to Cloudflare |
-| `npm test` | Run Vitest. There are no test files yet, so this currently exits with "No test files found". |
+| `npm test` | Run the Vitest suites in `tests/` (engine, hitbox coverage, protocol, art and animation checks) |
 
 <br>
 
@@ -309,7 +309,7 @@ Key design points:
 <a name="limitations"></a>
 <img src="docs/readme/headers/limitations.svg" width="100%" alt="10 / Honest notes: Known limitations">
 
-- **No automated tests yet.** Vitest is installed and `npm test` is wired up, but no test files exist, so it currently exits with an error. Combat balance has only been checked by playing.
+- **Limited automated tests.** `npm test` covers the engine, hitbox coverage for every body size, the protocol and the art/animation modules, but rendering is checked by eye and combat balance only by playing and AI-vs-AI runs.
 - **Online netcode is prediction + reconciliation, not rollback.** The net layer is kept behind the driver interface so rollback could be added later. On high-latency connections, expect visible corrections to the opponent's position.
 - **Private rooms only.** There is no matchmaking or spectating.
 - **Matches can be lost on restart.** If a Worker deploy or a Durable Object eviction happens mid-match, that match is lost and both players go back to the lobby with an "interrupted" notice.
