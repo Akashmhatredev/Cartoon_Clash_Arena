@@ -300,7 +300,7 @@ Key design points:
 - **Driver interface.** `FightScene` runs a fixed 60 Hz accumulator with render interpolation and talks to a driver (`tick(inputs) -> events`). `LocalDriver` steps the engine directly. `OnlineDriver` predicts locally and reconciles to server snapshots.
 - **Server authority.** Clients send only input bitmasks. The Room Durable Object runs the engine at 60 Hz and broadcasts snapshots at 20 Hz. Clients cannot declare hits, damage, rounds or wins. Rank points are written only by the Worker through a `SECURITY DEFINER` function that only `service_role` can execute.
 - **Abuse limits.** Messages are capped at 1 KB (4 KB for the hello message), each socket can send at most 120 messages/s, room creation is rate-limited per IP, unknown protocol versions are rejected, stale or duplicate inputs are dropped, and idle rooms are cleaned up after 10 minutes.
-- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Phaser runs with `pixelArt:false` and antialiasing on. The portraits in this README are the game's own, rendered by the same code.
+- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Animation is keyed to the engine's frame data, with a damped spring per joint for blending and drag and a per-character motion style (stance, bounce, walk, weight), and faces switch between normal, blink, hurt and shout expressions. Phaser runs with `pixelArt:false` and antialiasing on. The portraits in this README are the game's own, rendered by the same code.
 
 `CONTRACT.md` documents the engine state shape, event list, fighter data format and module interfaces in detail.
 
@@ -317,7 +317,7 @@ Key design points:
 - **Ranked play** requires the Worker's Supabase secrets to be set and both players to be signed in as different users. Otherwise, online matches are unranked.
 - **Free-tier ceilings.** The Cloudflare free plan allows roughly a few hundred online matches per day. Supabase's built-in SMTP sends only 2 emails/hour, so set up custom SMTP before real use. Vercel Hobby is for non-commercial use only. Details are in [docs/DEPLOY.md](docs/DEPLOY.md).
 - **Bundle size.** The Phaser fight chunk is about 360 kB gzipped. It is lazy-loaded, so menus load without it.
-- **Character IP.** This is a non-commercial fan project. Shinchan, Doraemon, Ninja Hattori, Pikachu, Ben 10, Nobita, Goku and Chhota Bheem belong to their respective owners, and this project is not affiliated with or endorsed by them. All art is original procedural placeholder art. Fighters are data-driven, so names and art can be replaced without touching the engine.
+- **Character IP.** This is a non-commercial fan project. Shinchan, Doraemon, Ninja Hattori, Pikachu, Ben 10, Nobita, Goku and Chhota Bheem belong to their respective owners, and this project is not affiliated with or endorsed by them. All art is original procedural fan art drawn in code: likenesses built from each character's design (proportions, hair, face, outfit colours), with no official artwork copied or embedded. Fighters are data-driven, so names and art can be replaced without touching the engine.
 
 <br>
 

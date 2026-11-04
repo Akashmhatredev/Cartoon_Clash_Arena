@@ -134,26 +134,59 @@ export function sideShade(ctx, x0, x1, y0, y1, alpha = 0.18) {
   ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
 }
 
+/** Organic limb outline: rounded caps joined by gently bulging sides (bulge 0 = straight taper). */
+export function limbPath(ctx, len, r1, r2, bulge = 0.12) {
+  const bx = ((r1 + r2) / 2) * (1 + bulge), by = len * 0.42;
+  ctx.beginPath();
+  ctx.arc(0, 0, r1, Math.PI, 0);
+  ctx.quadraticCurveTo(bx, by, r2, len);
+  ctx.arc(0, len, r2, 0, Math.PI);
+  ctx.quadraticCurveTo(-bx, by, -r1, 0);
+  ctx.closePath();
+}
+
 /**
- * Limb along +y from pivot (0,0) to (0,len): tapered capsule with colour bands.
+ * Limb along +y from pivot (0,0) to (0,len) with colour bands.
  * bands: [[fromFraction, colour], ...] (first fraction should be 0)
+ * The outline skips the joint cap at the pivot, so a child segment drawn over its parent reads as one
+ * continuous limb instead of a doll joint. opts: { bulge, seams, open }.
  */
-export function limb(ctx, len, r1, r2, bands, dim = 0, seams = true) {
-  const path = (c) => taperPath(c, 0, 0, 0, len, r1, r2);
-  const R = Math.max(r1, r2) + 2;
-  shaded(ctx, path, bands[0][1], (c) => {
-    for (let i = 1; i < bands.length; i++) {
-      c.fillStyle = bands[i][1];
-      c.fillRect(-R, bands[i][0] * len, R * 2, len + R * 2);
-    }
-    if (seams) {
-      for (let i = 1; i < bands.length; i++) line(c, -R, bands[i][0] * len, R, bands[i][0] * len, LW * 0.55);
-    }
-    sideShade(c, -R, -R * 0.25, -R, len + R, 0.2);
-    c.fillStyle = 'rgba(255,255,255,0.16)';
-    c.fillRect(R * 0.2, -R, R * 0.25, len + R * 2);
-    if (dim) { c.fillStyle = `rgba(11,15,30,${dim})`; c.fillRect(-R, -R, R * 2, len + R * 2); }
-  });
+export function limb(ctx, len, r1, r2, bands, dim = 0, seams = true, opts = null) {
+  const bulge = opts && opts.bulge != null ? opts.bulge : 0.12;
+  const open = !(opts && opts.open === false);
+  const path = (c) => limbPath(c, len, r1, r2, bulge);
+  const R = Math.max(r1, r2) * (1 + bulge) + 2;
+  path(ctx);
+  ctx.fillStyle = bands[0][1]; ctx.fill();
+  ctx.save();
+  path(ctx);
+  ctx.clip();
+  for (let i = 1; i < bands.length; i++) {
+    ctx.fillStyle = bands[i][1];
+    ctx.fillRect(-R, bands[i][0] * len, R * 2, len + R * 2);
+  }
+  if (seams) for (let i = 1; i < bands.length; i++) line(ctx, -R, bands[i][0] * len, R, bands[i][0] * len, LW * 0.55);
+  // cel shading: soft back-side band, crisp core shadow, small forward highlight
+  ctx.fillStyle = 'rgba(11,15,30,0.16)';
+  ctx.fillRect(-R, -R, R * 0.8, len + R * 2);
+  ctx.fillStyle = 'rgba(11,15,30,0.1)';
+  ctx.fillRect(-R, -R, R * 0.45, len + R * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(R * 0.22, -R * 0.2, R * 0.22, len * 0.85);
+  if (dim) { ctx.fillStyle = `rgba(11,15,30,${dim})`; ctx.fillRect(-R, -R, R * 2, len + R * 2); }
+  ctx.restore();
+  ctx.lineWidth = LW; ctx.strokeStyle = OUTLINE; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (open) {
+    const bx = ((r1 + r2) / 2) * (1 + bulge), by = len * 0.42;
+    ctx.beginPath();
+    ctx.moveTo(r1, 0);
+    ctx.quadraticCurveTo(bx, by, r2, len);
+    ctx.arc(0, len, r2, 0, Math.PI);
+    ctx.quadraticCurveTo(-bx, by, -r1, 0);
+    ctx.stroke();
+  } else {
+    path(ctx); ctx.stroke();
+  }
 }
 
 export function dimOver(ctx, pathFn, dim) {

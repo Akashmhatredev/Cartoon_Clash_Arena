@@ -318,6 +318,29 @@ export const sfx = { unlock(), play(name), handleEvents(events), setVolume(v /*0
 
 Screen shake is applied by B's scene from `state.shake`. Fighters render their own glow/outline. `perf` disables glow and reduces particles.
 
+Inside C's art module (not consumed by B; listed so the public API above stays stable while the internals evolve):
+
+```js
+// client/src/game/art/chars.js  registry over chars/kit.js + one art file per fighter in chars/<id>.js
+getSpec(charId, form = null) -> spec      // rig proportions + parts[]; spec.k = body.h / spec.H scales art to the engine hurtbox
+bodyFor(charId, form), paletteFor(charId, form), FORMS, EXPRS   // EXPRS = ['blink','hurt','shout']
+// every head drawer is head(ctx, e), e = 'normal' | 'blink' | 'hurt' | 'shout'; the head part carries variants: EXPRS
+
+// client/src/game/art/atlas.js
+buildAtlas(scene, spec) -> { key, S, frames }   // one frame per part name, plus "<part>@<expr>" per variant (same box and pivot)
+
+// client/src/game/art/figure.js  (no Phaser; portraits and tools)
+drawFigure(ctx, spec, pose, { show, skip, expr }) -> bones   // expr picks the variant drawing
+
+// client/src/game/art/animator.js  (no Phaser; render-only, never writes state)
+new Animator(charId, side).update(f, dtSeconds, legLen)  // sets cur (pose), anim, phase, pole, expr, sx, sy, spin, air
+// client/src/game/art/motion.js
+motionFor(charId, form = null) -> { stance, bounce, breathe, sway, wiggle, tremble, walk, weight, snap, headK, headLim, flip,
+                                     dashGuard, fidget, win, winMove, lose, loseMove, intro }
+```
+
+`FighterView` drives its parts from an `Animator` (motion keyed to the engine's frame counters, per-joint damped springs for blending and drag, personality from `motion.js`), anchors airborne fighters at the hip with a floor clamp, and swaps the head frame to `head@<expr>` when the expression changes.
+
 ## 9. Net and online (E)
 
 - `client/src/net/config.js`: `onlineConfigured` (VITE_WS_URL set), `supabaseConfigured` (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY), `onlineDisabledReason`, `accountsDisabledReason`.

@@ -6,7 +6,7 @@ import { IDLE } from './poses.js';
 import { makeCanvas, roundRectPath, rgba, shade, radialGlow } from './draw.js';
 
 const PORTRAIT_POSE = makePose({ tor: 4, head: -5, auf: 18, alf: 70, aub: 12, alb: 80 }, IDLE);
-const EXTRA_TOP = { pikachu: 30, heatblast: 34, goku: 20, doraemon: 2, xlr8: 6, fourarms: 4, bheem: 10, hattori: 4 };
+const EXTRA_TOP = { pikachu: 44, heatblast: 42, goku: 36, doraemon: 2, xlr8: 6, fourarms: 8, bheem: 18, hattori: 4, ben10: 10, shinchan: 4, nobita: 6 };
 const probeBones = new Float32Array(NB * 3);
 const cache = new Map();
 const urlCache = new Map();

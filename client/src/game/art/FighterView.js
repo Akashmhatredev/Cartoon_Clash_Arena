@@ -1,9 +1,8 @@
 // Skeletal puppet renderer for one fighter. A Container of atlas Images posed per joint.
-import { getMove } from '@shared/index.js';
 import { getSpec, FORMS } from './chars.js';
 import { buildAtlas } from './atlas.js';
-import { J, NJ, B, NB, D2R, solveRig, lowestY } from './rig.js';
-import { POSES, ATTACKS, IDLE, CROUCH, AIR_LEG_POSE, OWN_LEGS, guessAnim, overlayLegs, lerpPose } from './poses.js';
+import { J, B, NB, D2R, solveRig, lowestY } from './rig.js';
+import { Animator } from './animator.js';
 import { ensureCommonTextures, TEX, invScale, getRes } from '../fx/textures.js';
 import { hexNum } from './draw.js';
 
@@ -45,21 +44,16 @@ export class FighterView {
     this.rigs = {};
     this.rig = null;
     this.formKey = undefined;
-    this.cur = new Float32Array(NJ); this.cur.set(IDLE);
-    this.tgt = new Float32Array(NJ);
+    this.animator = new Animator(charId, this.side);
     this.bones = new Float32Array(NB * 3);
-    this.t = (this.side * 0.37) % 1;
-    this.walkPhase = 0;
-    this.sq = 1;
-    this.wasGrounded = true;
-    this.lastAction = null;
-    this.actionT = 0;
-    this.tintMode = -1;
-    this.formFlashT = 0;
-    this.moveCache = {};
+    this.t = 0;
+    this.face = this.side ? -1 : 1; // displayed facing, eases through 0 when the fighter turns around
+    this.expr = 'normal';
     this.anim = 'idle';
     this.phase = null;
     this.pole = false;
+    this.tintMode = -1;
+    this.formFlashT = 0;
     this._useRig(null);
   }
 
@@ -80,7 +74,20 @@ export class FighterView {
     c.add(imgs);
     c.setScale(spec.k);
     this.root.addAt(c, 2);
-    return { spec, c, imgs, parts: spec.parts, inv, k: spec.k, body: spec.body, accent: hexNum(spec.pal.accent || '#22e4ff') };
+    // faces with expression variants (blink, hurt, shout) are extra atlas frames named "<part>@<expr>"
+    const faces = [];
+    for (let i = 0; i < spec.parts.length; i++) {
+      const p = spec.parts[i];
+      if (p.variants) faces.push({ img: imgs[i], name: p.name, has: new Set(p.variants) });
+    }
+    // parts that stick out past the skeleton's contact points (hair, ears, the pole on Goku's back, shawls, tails):
+    // when the fighter lies down or tumbles they must not cut into the floor
+    const reach = [];
+    for (let i = 0; i < spec.parts.length; i++) {
+      const p = spec.parts[i];
+      if (p.name === 'head' || p.name === 'tail' || p.dyn === 'staffBack' || p.dyn === 'ear' || p.dyn === 'trail' || p.dyn === 'tailBob') reach.push(i);
+    }
+    return { spec, c, imgs, parts: spec.parts, inv, k: spec.k, body: spec.body, accent: hexNum(spec.pal.accent || '#22e4ff'), faces, exprShown: 'normal', reach };
   }
 
   _useRig(form) {
@@ -99,146 +106,13 @@ export class FighterView {
     if (had) this.formFlashT = 0.4;
   }
 
-  _move(f) {
-    const id = f.moveId;
-    if (!id) return null;
-    const fk = f.form || '_';
-    let byForm = this.moveCache[fk];
-    if (!byForm) byForm = this.moveCache[fk] = {};
-    let e = byForm[id];
-    if (e === undefined) {
-      let mv = null;
-      try { mv = getMove ? getMove(this.charId, id, f.form || null) : null; } catch { mv = null; }
-      e = byForm[id] = { mv, pole: !!(mv && /pole/i.test(String(mv.name || ''))) };
+  _setExpr(rig, expr) {
+    this.expr = expr;
+    rig.exprShown = expr;
+    for (const fc of rig.faces) {
+      const name = expr !== 'normal' && fc.has.has(expr) ? `${fc.name}@${expr}` : fc.name;
+      if (fc.img.frame && fc.img.frame.name !== name) fc.img.setFrame(name, false, false);
     }
-    return e;
-  }
-
-  // ------------------------------------------------------------------ pose targets
-  _target(f, dt) {
-    const tgt = this.tgt;
-    const t = this.t;
-    let rate = 14;
-    const act = f.action;
-    if (act !== this.lastAction) { this.lastAction = act; this.actionT = 0; }
-    this.actionT += dt;
-    this.pole = false;
-    this.phase = null;
-    let anim = act;
-
-    switch (act) {
-      case 'attack': {
-        const e = this._move(f);
-        const mv = e ? e.mv : null;
-        anim = mv && ATTACKS[mv.anim] ? mv.anim : guessAnim(f.moveId);
-        if (!ATTACKS[anim]) anim = 'punch';
-        const set = ATTACKS[anim];
-        this.pole = this.charId === 'goku' && !!e && e.pole;
-        const ph = f.movePhase;
-        this.phase = ph;
-        const crouchMove = !!f.crouching || (typeof f.moveId === 'string' && f.moveId.startsWith('crouch'));
-        const mf = f.moveFrame | 0;
-        if (ph === 'startup') { tgt.set(set.w); rate = 24; }
-        else if (ph === 'active') {
-          const iv = (mv && mv.hitInterval) || 4;
-          const alt = set.alt && (((mf / iv) | 0) & 1);
-          tgt.set(alt ? set.alt : set.s);
-          rate = 62;
-        } else if (ph === 'recovery') {
-          const st = mv ? (mv.startup || 0) + (mv.active || 0) : 0;
-          const rec = mv && mv.recovery ? mv.recovery : 12;
-          let p = (mf - st) / rec;
-          p = p < 0 ? 0 : p > 1 ? 1 : p;
-          lerpPose(tgt, set.r || set.s, crouchMove ? CROUCH : IDLE, p * 0.9);
-          rate = 16;
-        } else { tgt.set(set.s); rate = 30; }
-        if (!OWN_LEGS[anim]) {
-          if (crouchMove) overlayLegs(tgt, CROUCH);
-          else if (!f.grounded) overlayLegs(tgt, AIR_LEG_POSE, false);
-        }
-        if (anim === 'taunt') { tgt[J.ROT] += Math.sin(t * 14) * 5; tgt[J.ALF] += Math.sin(t * 16) * 18; }
-        if (anim === 'glide') tgt[J.RY] += Math.sin(t * 5) * 3;
-        break;
-      }
-      case 'walk': {
-        const fwd = (f.vx || 0) * (f.facing || 1);
-        const dir = fwd < -0.01 ? -1 : 1;
-        let cyc = Math.abs(f.vx || 0) * 60 / 140;
-        cyc = cyc < 1 ? 1 : cyc > 2.6 ? 2.6 : cyc;
-        this.walkPhase = (this.walkPhase + dt * TWO_PI * cyc * dir) % (TWO_PI * 100);
-        const p = this.walkPhase, sp = Math.sin(p), cp = Math.cos(p) * dir;
-        tgt.set(IDLE);
-        tgt[J.LUF] = 10 + 26 * sp; tgt[J.LUB] = -8 - 26 * sp;
-        tgt[J.LLF] = -12 - 34 * (cp > 0 ? cp : 0);
-        tgt[J.LLB] = -12 - 34 * (cp < 0 ? -cp : 0);
-        tgt[J.AUF] -= 8 * sp; tgt[J.AUB] += 8 * sp;
-        tgt[J.TOR] += dir > 0 ? 4 : -3;
-        rate = 30;
-        break;
-      }
-      case 'jump':
-        anim = (f.vy || 0) < 0 ? 'jump' : 'fall';
-        tgt.set(POSES[anim]); rate = 16;
-        break;
-      case 'crouch': tgt.set(CROUCH); rate = 24; break;
-      case 'dash': tgt.set(POSES.dash); rate = 24; break;
-      case 'backdash': tgt.set(POSES.backdash); rate = 24; break;
-      case 'block':
-      case 'blockstun':
-        anim = f.blocking === 'low' || f.crouching ? 'crouchBlock' : 'block';
-        tgt.set(POSES[anim]);
-        if (act === 'blockstun') tgt[J.RX] -= 3;
-        rate = 30;
-        break;
-      case 'hitstun':
-        anim = f.crouching ? 'crouchHit' : 'hitstun';
-        tgt.set(POSES[anim]);
-        if (!f.grounded) overlayLegs(tgt, POSES.fall, false);
-        rate = this.actionT < 0.12 ? 48 : 14;
-        break;
-      case 'launched':
-        tgt.set(POSES.launched);
-        tgt[J.ROT] = -40 - Math.min(f.actionFrame | 0, 40) * 2.2;
-        rate = 14;
-        break;
-      case 'ko':
-        anim = f.grounded ? 'knockdown' : 'launched';
-        tgt.set(POSES[anim]);
-        rate = 10;
-        break;
-      case 'knockdown': tgt.set(POSES.knockdown); rate = 12; break;
-      case 'getup': tgt.set(POSES.getup); rate = 10; break;
-      case 'grabbed': tgt.set(POSES.grabbed); tgt[J.RX] += Math.sin(t * 40) * 1.5; rate = 20; break;
-      case 'win': {
-        tgt.set(POSES.win);
-        const b = 0.5 + 0.5 * Math.sin(t * 6);
-        tgt[J.LLF] -= 14 * b; tgt[J.LLB] -= 14 * b; tgt[J.LUF] += 6 * b;
-        tgt[J.AUF] += Math.sin(t * 6) * 8;
-        rate = 10;
-        break;
-      }
-      case 'lose': tgt.set(POSES.lose); rate = 6; break;
-      case 'intro': {
-        tgt.set(POSES.intro);
-        const b = Math.sin(t * 3);
-        tgt[J.LLF] -= 4 + 4 * b; tgt[J.LLB] -= 4 + 4 * b; tgt[J.TOR] += b * 2;
-        rate = 8;
-        break;
-      }
-      default: {
-        anim = f.grounded === false ? 'fall' : 'idle';
-        tgt.set(anim === 'fall' ? POSES.fall : IDLE);
-        if (anim === 'idle') {
-          const br = Math.sin(t * 2.4);
-          tgt[J.LLF] += -2 - 2 * br; tgt[J.LLB] += -2 - 2 * br;
-          tgt[J.TOR] += br * 1.2; tgt[J.HEAD] += br;
-          tgt[J.AUF] += br * 2; tgt[J.AUB] += br * 2;
-        }
-        rate = 12;
-      }
-    }
-    this.anim = anim;
-    return rate;
   }
 
   // ------------------------------------------------------------------ per-frame
@@ -250,21 +124,34 @@ export class FighterView {
     this._useRig(this.charId === 'ben10' ? f.form : null);
     const rig = this.rig;
     const s = rig.spec;
-    const cur = this.cur, tgt = this.tgt;
-
-    const rate = this._target(f, dt);
-    const a = 1 - Math.exp(-rate * dt);
-    for (let i = 0; i < NJ; i++) cur[i] += (tgt[i] - cur[i]) * a;
+    const A = this.animator;
+    A.update(f, dt, (s.uLeg + s.lLeg) * s.k);
+    const cur = A.cur;
+    this.anim = A.anim; this.phase = A.phase; this.pole = A.pole;
+    if (A.expr !== this.expr || rig.exprShown !== A.expr) this._setExpr(rig, A.expr);
 
     const bones = this.bones;
+    if (rig.standLow === undefined) { solveRig(s, A.stance, bones); rig.standLow = lowestY(s, bones); }
     solveRig(s, cur, bones);
-    const dy = -lowestY(s, bones) + cur[J.RY];
+    // grounded: the lowest point sits on the floor; airborne: the hip keeps its standing height above the
+    // feet so flips and tumbles turn around the body instead of rolling over whichever limb is lowest
+    let low = lowestY(s, bones);
+    const r0 = cur[J.ROT];
+    if (r0 < -30 || r0 > 30) low = this._reachLow(rig, bones, low);
+    let dy = -low + cur[J.RY];
+    const air = A.air;
+    if (air > 0.001) {
+      dy += (low - rig.standLow) * air;
+      const maxDy = (GROUND_Y - y) / (s.k * (A.sy || 1)) - low; // never dip below the floor
+      if (dy > maxDy) dy = maxDy;
+    }
     let dx = cur[J.RX];
     if (f.hitFlash > 0 && f.action === 'hitstun') dx += Math.sin(t * 90) * 2;
 
     // place parts
     const parts = rig.parts, imgs = rig.imgs, inv = rig.inv;
     const fwd = (f.vx || 0) * (f.facing || 1);
+    const tilt = Math.sin(cur[J.ROT] * D2R) * 57.3; // periodic so flips and tumbles never pop the cloth
     for (let i = 0; i < parts.length; i++) {
       const p = parts[i];
       const img = imgs[i];
@@ -281,10 +168,10 @@ export class FighterView {
         switch (p.dyn) {
           case 'trail': {
             let k = fwd * 5; k = k < -20 ? -20 : k > 45 ? 45 : k;
-            rot += (k + Math.sin(t * 7 + i) * 7 - cur[J.ROT] * 0.5) * D2R;
+            rot += (k + Math.sin(t * 7 + i) * 7 - tilt * 0.5) * D2R;
             break;
           }
-          case 'ear': rot += (Math.sin(t * 3.1 + i) * 3 - cur[J.ROT] * 0.15 - (f.action === 'hitstun' ? 18 : 0)) * D2R; break;
+          case 'ear': rot += (Math.sin(t * 3.1 + i) * 3 - tilt * 0.15 - (f.action === 'hitstun' ? 18 : 0)) * D2R; break;
           case 'flame':
             img.setScale(inv * (1 + Math.sin(t * 19) * 0.05), inv * (1 + Math.sin(t * 13) * 0.08 + Math.sin(t * 31) * 0.04));
             break;
@@ -302,22 +189,14 @@ export class FighterView {
       img.x = px; img.y = py; img.rotation = rot;
     }
 
-    // squash & stretch on land / take-off
-    const g = f.grounded !== false;
-    if (g && !this.wasGrounded) this.sq = 0.84;
-    else if (!g && this.wasGrounded && (f.vy || 0) < 0) this.sq = 1.13;
-    this.wasGrounded = g;
-    this.sq += (1 - this.sq) * (1 - Math.exp(-11 * dt));
-    const sqy = this.sq * cur[J.SY];
-    const sqx = (1 + (1 - this.sq) * 0.7) * cur[J.SX];
-    let spin = 1;
-    if (this.anim === 'spin' && this.phase === 'active') {
-      spin = Math.cos(t * 24);
-      if (spin > -0.15 && spin < 0.15) spin = spin < 0 ? -0.15 : 0.15;
-    }
+    // squash & stretch and spin come from the animator; turning around eases through zero width
     const facing = (f.facing || 1) < 0 ? -1 : 1;
+    let fc = this.face + (facing - this.face) * (1 - Math.exp(-28 * dt));
+    if (Math.abs(facing - fc) < 0.02) fc = facing;
+    if (fc > -0.12 && fc < 0.12) fc = facing > 0 ? 0.12 : -0.12;
+    this.face = fc;
     this.root.setPosition(x, y);
-    this.root.setScale(facing * sqx * spin, sqy);
+    this.root.setScale(fc * A.sx * A.spin, A.sy);
 
     // alpha: invulnerability flicker, teleport fade
     let alpha = 1;
@@ -403,6 +282,27 @@ export class FighterView {
     this.shadow.setPosition(x, GROUND_Y);
     this.shadow.setScale((shw / 128) * this.shadowInv * (1 - hn * 0.45), this.shadowInv * (1 - hn * 0.3));
     this.shadow.setAlpha(0.55 * (1 - hn * 0.6));
+  }
+
+  /** lowest drawn point of the parts that reach past the skeleton (box corners pulled in 20%) */
+  _reachLow(rig, bones, low) {
+    const parts = rig.parts, reach = rig.reach;
+    for (let n = 0; n < reach.length; n++) {
+      const p = parts[reach[n]];
+      if (p.dyn === 'staffBack' && this.pole) continue;
+      const bi = p.bone * 3;
+      let y = bones[bi + 1];
+      const r = bones[bi + 2];
+      if (p.ox || p.oy) y += p.ox * Math.sin(r) + p.oy * Math.cos(r);
+      const rr = r + p.rot * D2R, c = Math.cos(rr), sn = Math.sin(rr);
+      const b = p.box;
+      const cx = (b[0] + b[2]) * 0.5, cy = (b[1] + b[3]) * 0.5;
+      const hw = (b[2] - b[0]) * 0.4, hh = (b[3] - b[1]) * 0.4;
+      const yc = y + cx * sn + cy * c;
+      const ext = Math.abs(hw * sn) + Math.abs(hh * c);
+      if (yc + ext > low) low = yc + ext;
+    }
+    return low;
   }
 
   destroy() {

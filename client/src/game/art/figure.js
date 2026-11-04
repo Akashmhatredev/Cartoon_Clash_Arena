@@ -6,6 +6,7 @@ const bones = new Float32Array(NB * 3);
 
 /**
  * Draws spec's parts in pose `pose` with feet at (0,0) in the ctx's current transform.
+ * opts: { show: { prop, staffHand }, skip(part), expr: 'blink' | 'hurt' | 'shout' }
  * Returns the bones array (shared scratch, valid until the next call).
  */
 export function drawFigure(ctx, spec, pose, opts = {}) {
@@ -28,7 +29,8 @@ export function drawFigure(ctx, spec, pose, opts = {}) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(r + p.rot * D2R);
-    p.draw(ctx);
+    if (opts.expr && p.variants && p.variants.indexOf(opts.expr) >= 0) p.draw(ctx, opts.expr);
+    else p.draw(ctx);
     ctx.restore();
   }
   bones.snap = snap;
