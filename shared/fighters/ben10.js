@@ -7,7 +7,7 @@ export default fighter({
   id: 'ben10', name: 'Ben 10', title: 'Wielder of the Omnitrix', bio: 'A kid with a watch full of aliens, each with a real catch.',
   hp: 100, stats: { speed: 3, power: 3, defense: 3 },
   walkSpeed: 4.0, backSpeed: 3.3, jumpVel: -17, jumpSpeedX: 4.2, dashSpeed: 10,
-  body: { w: 80, h: 175, crouchH: 115 },
+  body: { w: 70, h: 166, crouchH: 108 },
   palette: { primary: '#2fbf4a', secondary: '#1b1f2b', accent: '#9cff3a', skin: '#ffd2a8', outline: '#0b0f1e' },
   homeStage: 'neon_city',
   passive: { name: 'Adaptive Fighter', desc: 'Four Arms is strong but slow, XLR8 fast but fragile, Heatblast ranged with limited fireballs.' },
@@ -33,7 +33,7 @@ export default fighter({
   forms: {
     fourarms: {
       walkSpeed: 3.0, backSpeed: 2.4, jumpVel: -15, dashSpeed: 8, dmgMult: 1.3, defMult: 0.85,
-      body: { w: 110, h: 205, crouchH: 135 },
+      body: { w: 118, h: 210, crouchH: 138 },
       moves: {
         light: light({ name: 'Quad Jab', desc: 'Heavy jab, slower.', startup: 7, recovery: 11, damage: 6, hitbox: { x: 10, y: -150, w: 76, h: 80 } }),
         heavy: heavy({ name: 'Double Hammer', anim: 'slam', desc: 'Two-fist smash. Slow.', startup: 15, recovery: 22, damage: 13,
@@ -41,6 +41,8 @@ export default fighter({
         special2: special({ name: 'Alien Rush: Charge', input: '→+Sp', anim: 'dashStrike', desc: 'Armored shoulder charge.',
           startup: 8, active: 12, recovery: 22, damage: 11, cooldown: 120, armor: [4, 16], dash: { speed: 8, frames: 12, from: 6, stopOnHit: true },
           hitbox: { x: 0, y: -160, w: 80, h: 120 }, knockback: { x: 8, y: -4 } }),
+        // body w 118: the shared throw box (w 56) ended inside his own hurtbox, so he could never grab
+        throw: throwMove({ name: 'Hero Toss', hitbox: { x: 0, y: -130, w: 66, h: 90 } }),
         special3: special({ name: 'Elemental Blast: Ground Clap', input: '↓+Sp', anim: 'slam', desc: 'Short ground shockwave. Low.',
           startup: 16, active: 1, recovery: 22, hitbox: null, damage: 0, cooldown: 120,
           projectile: proj({ kind: 'shockwave', vx: 8, w: 60, h: 50, offX: 60, offY: -25, life: 32, damage: 10, guard: 'low',
@@ -49,7 +51,7 @@ export default fighter({
     },
     xlr8: {
       walkSpeed: 6.0, backSpeed: 5.0, jumpVel: -18, dashSpeed: 15, dmgMult: 0.8, defMult: 1.15,
-      body: { w: 72, h: 170, crouchH: 105 },
+      body: { w: 70, h: 164, crouchH: 102 },
       moves: {
         light: light({ name: 'Blur Jab', desc: 'Very fast, weak jab.', startup: 3, recovery: 7, damage: 4 }),
         heavy: heavy({ name: 'Speed Kick', anim: 'kick', desc: 'Fast kick.', startup: 7, recovery: 12, damage: 8 }),
@@ -63,7 +65,7 @@ export default fighter({
     },
     heatblast: {
       walkSpeed: 3.8, backSpeed: 3.2, dmgMult: 1.0, defMult: 1.0,
-      body: { w: 80, h: 180, crouchH: 118 },
+      body: { w: 78, h: 178, crouchH: 116 },
       moves: {
         light: light({ name: 'Flame Jab', desc: 'Burning jab.', effect: 'fire' }),
         heavy: heavy({ name: 'Fire Punch', desc: 'Blazing punch.', effect: 'fire' }),
@@ -72,7 +74,7 @@ export default fighter({
           dash: { speed: 10, frames: 10, from: 4, stopOnHit: true }, hitbox: { x: 0, y: -130, w: 70, h: 85 } }),
         special3: special({ name: 'Elemental Blast: Fireball', input: '↓+Sp', anim: 'cast', desc: 'Fireball. Uses ammo (3, refills slowly).',
           ammo: true, startup: 12, active: 1, recovery: 18, hitbox: null, damage: 0, cooldown: 40,
-          projectile: proj({ kind: 'fireball', vx: 9, w: 44, h: 40, offX: 45, offY: -110, life: 100, damage: 10, effect: 'fire' }) }),
+          projectile: proj({ kind: 'fireball', vx: 9, w: 44, h: 40, offX: 45, offY: -100, life: 100, damage: 10, effect: 'fire' }) }),
       },
     },
   },

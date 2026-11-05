@@ -4,7 +4,7 @@ export default fighter({
   id: 'bheem', name: 'Chhota Bheem', title: 'Strongest Boy in the Village', bio: 'Powered by laddoos and a big heart, he shrugs off small hits.',
   hp: 115, stats: { speed: 2, power: 5, defense: 4 },
   walkSpeed: 3.5, backSpeed: 2.9, jumpVel: -16, jumpSpeedX: 3.8, dashSpeed: 9, dmgMult: 1.18, defMult: 0.92,
-  body: { w: 95, h: 175, crouchH: 118 },
+  body: { w: 90, h: 160, crouchH: 106 },
   palette: { primary: '#ff8a1f', secondary: '#e8322f', accent: '#ffd43b', skin: '#c98a5a', outline: '#0b0f1e' },
   homeStage: 'village',
   passive: { name: 'Unbreakable Spirit', desc: 'Armor against light hits on select heavy-move frames. Never vs throws, heavies or projectiles.' },

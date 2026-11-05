@@ -4,7 +4,7 @@ import { FIGHTER_IDS } from './constants.js';
 import { STAGE_IDS } from './stages.js';
 import { isValidMask } from './input.js';
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 export const MAX_MSG_BYTES = 1024;     // every client message except hello
 export const MAX_HELLO_BYTES = 4096;   // hello may carry a Supabase access token (JWTs are often > 1 KB)

@@ -15,10 +15,14 @@ export function buildAtlas(scene, spec) {
   const known = infoCache.get(key);
   if (known && scene.textures.exists(key)) return known;
 
-  const items = spec.parts.map((p) => {
+  // one item per part, plus one per expression variant (frame "<part>@<expr>", same box and pivot)
+  const items = [];
+  for (const p of spec.parts) {
     const [x0, y0, x1, y1] = p.box;
-    return { p, x0, y0, w: Math.ceil((x1 - x0) * S) + PAD * 2, h: Math.ceil((y1 - y0) * S) + PAD * 2, x: 0, y: 0 };
-  });
+    const w = Math.ceil((x1 - x0) * S) + PAD * 2, h = Math.ceil((y1 - y0) * S) + PAD * 2;
+    items.push({ p, name: p.name, v: null, x0, y0, w, h, x: 0, y: 0 });
+    for (const v of p.variants || []) items.push({ p, name: `${p.name}@${v}`, v, x0, y0, w, h, x: 0, y: 0 });
+  }
   let area = 0, maxW = 0;
   for (const it of items) { area += it.w * it.h; if (it.w > maxW) maxW = it.w; }
   const W = Math.max(maxW, Math.ceil(Math.sqrt(area) * 1.25));
@@ -37,14 +41,14 @@ export function buildAtlas(scene, spec) {
     ctx.save();
     ctx.translate(it.x + PAD - it.x0 * S, it.y + PAD - it.y0 * S);
     ctx.scale(S, S);
-    try { it.p.draw(ctx); } catch (e) { console.warn('[art] part', spec.id, it.p.name, e); }
+    try { if (it.v) it.p.draw(ctx, it.v); else it.p.draw(ctx); } catch (e) { console.warn('[art] part', spec.id, it.name, e); }
     ctx.restore();
-    frames[it.p.name] = { ox: (PAD - it.x0 * S) / it.w, oy: (PAD - it.y0 * S) / it.h, it };
+    frames[it.name] = { ox: (PAD - it.x0 * S) / it.w, oy: (PAD - it.y0 * S) / it.h, it };
   }
   if (scene.textures.exists(key)) scene.textures.remove(key);
   const tex = scene.textures.create(key, cv, cv.width, cv.height);
   tex.add('__BASE', 0, 0, 0, cv.width, cv.height);
-  for (const it of items) tex.add(it.p.name, 0, it.x, it.y, it.w, it.h);
+  for (const it of items) tex.add(it.name, 0, it.x, it.y, it.w, it.h);
   const info = { key, S, frames };
   infoCache.set(key, info);
   return info;

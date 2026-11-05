@@ -4,7 +4,7 @@ export default fighter({
   id: 'hattori', name: 'Ninja Hattori', title: 'Shadow of the Iga Clan', bio: 'A cheerful young ninja who is everywhere at once.',
   hp: 90, stats: { speed: 5, power: 3, defense: 2 },
   walkSpeed: 5.2, backSpeed: 4.4, jumpVel: -18, jumpSpeedX: 5.2, dashSpeed: 12.5, dashFrames: 11, defMult: 1.08,
-  body: { w: 70, h: 180, crouchH: 115 },
+  body: { w: 66, h: 166, crouchH: 108 },
   palette: { primary: '#2f5fd0', secondary: '#1a2550', accent: '#ffd43b', skin: '#ffd2a8', outline: '#0b0f1e' },
   homeStage: 'dojo',
   passive: { name: 'Ninja Reflex', desc: 'After a backdash or Wind Dash, his next move recovers 35% faster.' },

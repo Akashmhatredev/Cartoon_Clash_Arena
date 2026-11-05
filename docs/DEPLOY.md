@@ -33,7 +33,7 @@ npx wrangler deploy
 - `wrangler.jsonc` already declares the `Room` class under `new_sqlite_classes`. That's required: the Free plan only allows SQLite-backed Durable Objects.
 - Set `ALLOWED_ORIGINS` in `wrangler.jsonc` `vars` to your site, e.g. `"https://your-game.vercel.app,https://*.vercel.app,http://localhost:5173"`. Empty allows any origin.
 - The `ratelimits` block limits `POST /rooms` to 10 per minute per IP. If deploy rejects it, delete the block; the Worker skips the check when the binding is missing.
-- Check it with `curl https://<name>.<subdomain>.workers.dev/health`. It should return `{"ok":true,"v":1,"ranked":true|false}`.
+- Check it with `curl https://<name>.<subdomain>.workers.dev/health`. It should return `{"ok":true,"v":2,"ranked":true|false}`.
 - For local dev, run `npm run server:dev` (port 8787). Secrets go in `server/.dev.vars` (see `.dev.vars.example`).
 
 ## 3. Vercel (frontend)

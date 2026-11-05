@@ -160,18 +160,20 @@ Inputs are buffered for 8 frames. You can view each fighter's full move list, wi
   <img src="docs/readme/roster/bheem.svg" width="24%" alt="Chhota Bheem, Strongest Boy in the Village. HP 115. Speed 2, Power 5, Defense 4. Ultimate: Dholakpur Smash.">
 </p>
 
-| Fighter | HP | Specials | Ultimate | Passive |
-| --- | --- | --- | --- | --- |
-| **Shinchan** | 100 | B-Style Dash, Mischief Feint, Chaos Spin | Maximum Mischief | *Unpredictable:* some basics recover faster |
-| **Doraemon** | 105 | Bamboo Copter, Anywhere Door, Time Machine Pulse | Future Gadget Arsenal | *Gadget Expert:* faster gadget cooldowns after a 3-hit combo |
-| **Ninja Hattori** | 90 | Shadow Clone, Wind Dash, Shuriken Burst | Shadow Storm | *Ninja Reflex:* faster recovery after a dodge |
-| **Pikachu** | 95 | Thunder Jolt, Quick Attack, Thunder Wave | Thunderstorm | *Static Charge:* basic hits power up the next electric special |
-| **Ben 10** | 100 | Omnitrix Shift (Four Arms, XLR8, Heatblast), Alien Rush, Elemental Blast | Omnitrix Overload | *Adaptive Fighter:* each alien form has real strengths and downsides |
-| **Nobita** | 90 | Slingshot Shot, Lucky Escape, Gadget Trap | Impossible Comeback | *Survival Instinct:* takes less damage below 30% HP |
-| **Kid Goku** | 105 | Kamehameha (hold to charge), Power Pole Strike, Dragon Dash | Miniature Spirit Burst | *Martial Arts Momentum:* long combos build bonus meter |
-| **Chhota Bheem** | 115 | Power Charge, Earthquake Slam, Super Strength | Dholakpur Smash | *Unbreakable Spirit:* armor against light hits on some heavy frames |
+| Fighter | HP | Height (canon) | Specials | Ultimate | Passive |
+| --- | --- | --- | --- | --- | --- |
+| **Shinchan** | 100 | 138 px (5 y/o) | B-Style Dash, Mischief Feint, Chaos Spin | Maximum Mischief | *Unpredictable:* some basics recover faster |
+| **Doraemon** | 105 | 158 px (129.3 cm, 129.3 kg) | Bamboo Copter, Anywhere Door, Time Machine Pulse | Future Gadget Arsenal | *Gadget Expert:* faster gadget cooldowns after a 3-hit combo |
+| **Ninja Hattori** | 90 | 166 px (~140 cm) | Shadow Clone, Wind Dash, Shuriken Burst | Shadow Storm | *Ninja Reflex:* faster recovery after a dodge |
+| **Pikachu** | 95 | 120 px (40 cm, scaled up for gameplay) | Thunder Jolt, Quick Attack, Thunder Wave | Thunderstorm | *Static Charge:* basic hits power up the next electric special |
+| **Ben 10** | 100 | 166 px (10 y/o; Four Arms 210 px) | Omnitrix Shift (Four Arms, XLR8, Heatblast), Alien Rush, Elemental Blast | Omnitrix Overload | *Adaptive Fighter:* each alien form has real strengths and downsides |
+| **Nobita** | 90 | 168 px (~140 cm) | Slingshot Shot, Lucky Escape, Gadget Trap | Impossible Comeback | *Survival Instinct:* takes less damage below 30% HP |
+| **Kid Goku** | 105 | 146 px (~100-124 cm) | Kamehameha (hold to charge), Power Pole Strike, Dragon Dash | Miniature Spirit Burst | *Martial Arts Momentum:* long combos build bonus meter |
+| **Chhota Bheem** | 115 | 160 px (9 y/o) | Power Charge, Earthquake Slam, Super Strength | Dholakpur Smash | *Unbreakable Spirit:* armor against light hits on some heavy frames |
 
 Fighters are pure data (`shared/fighters/<id>.js`): stats, hurtboxes, and per-move frame data, hitboxes, damage, knockback, cooldown and meter values. Names, moves and art can be changed without touching the engine.
+
+A fighter's height sets both its hurtbox and its drawn size. Heights follow each character's canon size, compressed into a playable range. Pikachu is scaled up to fighter size, as crossover fighting games do, so it stays a fair target.
 
 <br>
 
@@ -298,7 +300,7 @@ Key design points:
 - **Driver interface.** `FightScene` runs a fixed 60 Hz accumulator with render interpolation and talks to a driver (`tick(inputs) -> events`). `LocalDriver` steps the engine directly. `OnlineDriver` predicts locally and reconciles to server snapshots.
 - **Server authority.** Clients send only input bitmasks. The Room Durable Object runs the engine at 60 Hz and broadcasts snapshots at 20 Hz. Clients cannot declare hits, damage, rounds or wins. Rank points are written only by the Worker through a `SECURITY DEFINER` function that only `service_role` can execute.
 - **Abuse limits.** Messages are capped at 1 KB (4 KB for the hello message), each socket can send at most 120 messages/s, room creation is rate-limited per IP, unknown protocol versions are rejected, stale or duplicate inputs are dropped, and idle rooms are cleaned up after 10 minutes.
-- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Phaser runs with `pixelArt:false` and antialiasing on. The portraits in this README are the game's own, rendered by the same code.
+- **Vector art, no pixels.** Fighters are procedural vector rigs, rasterized at load into high-resolution atlases (up to 2x device pixel ratio). Animation is keyed to the engine's frame data, with a damped spring per joint for blending and drag and a per-character motion style (stance, bounce, walk, weight), and faces switch between normal, blink, hurt and shout expressions. Phaser runs with `pixelArt:false` and antialiasing on. The portraits in this README are the game's own, rendered by the same code.
 
 `CONTRACT.md` documents the engine state shape, event list, fighter data format and module interfaces in detail.
 
@@ -315,7 +317,7 @@ Key design points:
 - **Ranked play** requires the Worker's Supabase secrets to be set and both players to be signed in as different users. Otherwise, online matches are unranked.
 - **Free-tier ceilings.** The Cloudflare free plan allows roughly a few hundred online matches per day. Supabase's built-in SMTP sends only 2 emails/hour, so set up custom SMTP before real use. Vercel Hobby is for non-commercial use only. Details are in [docs/DEPLOY.md](docs/DEPLOY.md).
 - **Bundle size.** The Phaser fight chunk is about 360 kB gzipped. It is lazy-loaded, so menus load without it.
-- **Character IP.** This is a non-commercial fan project. Shinchan, Doraemon, Ninja Hattori, Pikachu, Ben 10, Nobita, Goku and Chhota Bheem belong to their respective owners, and this project is not affiliated with or endorsed by them. All art is original procedural placeholder art. Fighters are data-driven, so names and art can be replaced without touching the engine.
+- **Character IP.** This is a non-commercial fan project. Shinchan, Doraemon, Ninja Hattori, Pikachu, Ben 10, Nobita, Goku and Chhota Bheem belong to their respective owners, and this project is not affiliated with or endorsed by them. All art is original procedural fan art drawn in code: likenesses built from each character's design (proportions, hair, face, outfit colours), with no official artwork copied or embedded. Fighters are data-driven, so names and art can be replaced without touching the engine.
 
 <br>
 
